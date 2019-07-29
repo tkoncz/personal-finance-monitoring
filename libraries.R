@@ -1,0 +1,4 @@
+suppressPackageStartupMessages(library(googlesheets))
+suppressPackageStartupMessages(library(data.table))
+suppressPackageStartupMessages(library(magrittr))
+suppressPackageStartupMessages(library(ggplot2))
