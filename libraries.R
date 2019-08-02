@@ -1,4 +1,7 @@
+suppressPackageStartupMessages(library(shinydashboard))
+suppressPackageStartupMessages(library(DT))
 suppressPackageStartupMessages(library(googlesheets))
 suppressPackageStartupMessages(library(data.table))
+suppressPackageStartupMessages(library(purrr))
 suppressPackageStartupMessages(library(magrittr))
 suppressPackageStartupMessages(library(ggplot2))
