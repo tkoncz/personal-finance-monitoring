@@ -4,8 +4,7 @@ loadGoogleSheet <- function(google_sheet_name) {
         addSubCategory_() %>%
         fixOtherCurrency_() %>%
         addShareAmounts_() %>%
-        addNetBalances_() %>%
-        selectRelevantColumns()
+        addNetBalances_()
 }
 
 loadRawGoogleSheet <- function(google_sheet_name) {
@@ -54,7 +53,7 @@ addShareAmounts_ <- function(google_sheet) {
 
 addShareAmount_ <- function(google_sheet, person, which_share) {
     other_person <- setdiff(c("TomiMaci", "NikiCica"), person)
-    column_to_add <- paste(tolower(person), tolower(gsub(" ", "_", which_share)), "share", sep = "_")
+    column_to_add <- paste(person, which_share, "Share")
     google_sheet[, (column_to_add) := dplyr::case_when(
             grepl(person, get(which_share)) & grepl(other_person, get(which_share)) ~ Amount / 2,
             grepl(person, get(which_share))                                         ~ Amount,
@@ -65,8 +64,8 @@ addShareAmount_ <- function(google_sheet, person, which_share) {
 
 addNetBalances_ <- function(google_sheet) {
     google_sheet[,  `:=`(
-        `NikiCica Net Balance` = nikicica_paid_by_share - nikicica_paid_for_share,
-        `TomiMaci Net Balance` = tomimaci_paid_by_share - tomimaci_paid_for_share
+        `NikiCica Net Balance` = `NikiCica Paid by Share` - `NikiCica Paid for Share`,
+        `TomiMaci Net Balance` = `TomiMaci Paid by Share` - `TomiMaci Paid for Share`
     )]
 }
 

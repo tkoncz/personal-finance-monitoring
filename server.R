@@ -4,7 +4,7 @@ server <- function(input, output) {
     })
 
     output$raw_spending_table <- DT::renderDataTable(
-        loadNewSpendingGoogleSheetReactive(),
+        loadNewSpendingGoogleSheetReactive() %>% selectRelevantColumns(),
         caption = "Data from 'Add new spending (Responses)' Google Sheet",
         options = list(pageLength = 50)
     )
@@ -14,14 +14,25 @@ server <- function(input, output) {
         selected_person <- input$person_selector
 
         if (length(selected_person) > 1) {
-            loadNewSpendingGoogleSheetReactive()
+            dt_to_plot <- loadNewSpendingGoogleSheetReactive() %>%
+                .[, .(
+                    Date,
+                    Spending = `NikiCica Paid for Share` + `TomiMaci Paid for Share`
+                )]
         } else {
-            loadNewSpendingGoogleSheetReactive() %>%
-                .[`Paid by` %like% selected_person]
+            dt_to_plot <- loadNewSpendingGoogleSheetReactive() %>%
+                .[,
+                    c("Date", paste(selected_person, "Paid for Share")),
+                    with = FALSE
+                ] %>%
+                setnames(paste(selected_person, "Paid for Share"), "Spending")
         }
+
+        dt_to_plot
     })
 
     output$total_spending_plot <- shiny::renderPlot(
-        getPlotInputDataReactive() %>% plotTotalSpending()
+        getPlotInputDataReactive() %>%
+            plotTotalSpending()
     )
 }

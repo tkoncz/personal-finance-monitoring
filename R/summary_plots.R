@@ -1,10 +1,10 @@
 plotTotalSpending <- function(google_sheet) {
     cumulative_spending <- google_sheet %>%
-        .[, .(Amount = sum(Amount)), by = .(Date)] %>%
-        .[order(Date), amount_cumsum := cumsum(Amount)] %>%
+        .[, .(Spending = sum(Spending)), by = .(Date)] %>%
+        .[order(Date), spending_cumsum := cumsum(Spending)] %>%
         .[]
 
-    ggplot(cumulative_spending, aes(x = Date, y = amount_cumsum)) +
+    ggplot(cumulative_spending, aes(x = Date, y = spending_cumsum)) +
         geom_bar(stat = "identity", fill = "lightblue") +
         scale_y_continuous(
             breaks = scales::pretty_breaks(),
