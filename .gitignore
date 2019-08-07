@@ -3,3 +3,6 @@
 .RData
 .Ruserdata
 .httr-oauth
+.Renviron
+googlesheets_token.rds
+*.rds
