@@ -8,15 +8,28 @@ server <- function(input, output) {
 
     filterSpendingSheetReactive <- reactive({
         req(input$person_selector)
-        selected_persons <- input$person_selector
+        req(input$date_interval)
 
         spending_paid_for_both_adjusted %>%
-            .[`Paid for` %in% selected_persons]
+            .[`Paid for` %in% input$person_selector] %>%
+            .[Date %between% input$date_interval]
+    })
+
+    # UI - Filters ----
+    output$date_interval_filter <- renderUI({
+        min_date <- spending_google_sheet[, min(Date)]
+        max_date <- spending_google_sheet[, max(Date)]
+
+        sliderInput(
+            "date_interval", "Select Date Interval:",
+            min = min_date, max = max_date, value = c(min_date, max_date),
+            step = 1
+        )
     })
 
     # UI - Plots & Tables ----
     output$total_spending_plot <- shiny::renderPlot(
-        plotTotalSpending(filterSpendingSheetReactive())
+        plotTotalSpendingOverTime(filterSpendingSheetReactive())
     )
 
     output$net_debt_table <- DT::renderDataTable(

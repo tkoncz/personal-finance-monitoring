@@ -1,10 +1,13 @@
 header <- dashboardHeader(title = "Personal finance monitoring")
 
 sidebar <- dashboardSidebar(
-    checkboxGroupInput(
-        "person_selector", label = "Select Person",
-        choices  = c("NikiCica", "TomiMaci"),
-        selected = c("NikiCica", "TomiMaci")
+    sidebarMenu(
+        uiOutput("date_interval_filter"),
+        checkboxGroupInput(
+            "person_selector", label = "Select Person",
+            choices  = c("NikiCica", "TomiMaci"),
+            selected = c("NikiCica", "TomiMaci")
+        )
     )
 )
 
