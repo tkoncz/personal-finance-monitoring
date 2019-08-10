@@ -7,15 +7,40 @@ server <- function(input, output) {
     spending_paid_for_both_adjusted <- adjustForPaidForByBoth(spending_google_sheet)
 
     filterSpendingSheetReactive <- reactive({
-        req(input$person_selector)
+        req(input$person)
         req(input$date_interval)
+        req(input$category)
 
         spending_paid_for_both_adjusted %>%
-            .[`Paid for` %in% input$person_selector] %>%
-            .[Date %between% input$date_interval]
+            .[`Paid for` %in% input$person] %>%
+            .[Date %between% input$date_interval] %>%
+            .[Category %in% input$category]
     })
 
     # UI - Filters ----
+    output$person_filter <- renderUI({
+        persons <- c("NikiCica", "TomiMaci")
+
+        pickerInput(
+            inputId = "person", label = "Select Person:",
+            choices = persons, selected = persons,
+            options = list(
+                `actions-box` = TRUE, size = 10,
+                `selected-text-format` = "count > 3"
+            ),
+            multiple = TRUE
+        )
+    })
+
+    output$currency_filter <- renderUI({
+        currencies <- spending_google_sheet[, unique(`Currency`)]
+
+        selectInput(
+            "currency", "Select Currency:",
+            currencies
+        )
+    })
+
     output$date_interval_filter <- renderUI({
         min_date <- spending_google_sheet[, min(Date)]
         max_date <- spending_google_sheet[, max(Date)]
@@ -24,6 +49,20 @@ server <- function(input, output) {
             "date_interval", "Select Date Interval:",
             min = min_date, max = max_date, value = c(min_date, max_date),
             step = 1
+        )
+    })
+
+    output$category_filter <- renderUI({
+        categories <- spending_google_sheet[, unique(`Category`)]
+
+        pickerInput(
+            inputId = "category", label = "Select Category:",
+            choices = categories, selected = categories,
+            options = list(
+                `actions-box` = TRUE, size = 10,
+                `selected-text-format` = "count > 3"
+            ),
+            multiple = TRUE
         )
     })
 
