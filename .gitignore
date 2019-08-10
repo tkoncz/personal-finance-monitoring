@@ -6,3 +6,4 @@
 .Renviron
 googlesheets_token.rds
 *.rds
+.Rprofile
