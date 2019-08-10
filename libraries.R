@@ -1,4 +1,6 @@
+suppressPackageStartupMessages(library(shiny))
 suppressPackageStartupMessages(library(shinydashboard))
+suppressPackageStartupMessages(library(shinycssloaders))
 suppressPackageStartupMessages(library(DT))
 suppressPackageStartupMessages(library(googlesheets))
 suppressPackageStartupMessages(library(data.table))

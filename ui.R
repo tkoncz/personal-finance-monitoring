@@ -28,15 +28,21 @@ dashboardPage(
         tabItems(
             tabItem(
                 "raw_spending_data",
-                fluidPage(DT::dataTableOutput("raw_spending_table"))
+                fluidRow(
+                    box(DT::dataTableOutput("raw_spending_table") %>% withSpinner(color = "#6984D1"), width = 12)
+                )
             ),
             tabItem(
                 "spending_summary_charts",
-                fluidPage(box(plotOutput("total_spending_plot")))
+                fluidRow(
+                    box(plotOutput("total_spending_plot") %>% withSpinner(color = "#6984D1"))
+                )
             ),
             tabItem(
                 "net_debt",
-                fluidPage(box(DT::dataTableOutput("net_debt_table")))
+                fluidRow(
+                    box(DT::dataTableOutput("net_debt_table") %>% withSpinner(color = "#6984D1"), width = 8)
+                )
             )
         )
     )
