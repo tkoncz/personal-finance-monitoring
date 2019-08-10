@@ -1,49 +1,37 @@
-dashboardPage(
-    dashboardHeader(title = "Personal finance monitoring"),
-    dashboardSidebar(
-        checkboxGroupInput(
-            "person_selector", label = "Select Person",
-            choices  = c("NikiCica", "TomiMaci"),
-            selected = c("NikiCica", "TomiMaci")
+header <- dashboardHeader(title = "Personal finance monitoring")
+
+sidebar <- dashboardSidebar(
+    checkboxGroupInput(
+        "person_selector", label = "Select Person",
+        choices  = c("NikiCica", "TomiMaci"),
+        selected = c("NikiCica", "TomiMaci")
+    )
+)
+
+body <- dashboardBody(
+    tabsetPanel(type = "tabs",
+        tabPanel(
+            title = "Raw Spending Data", icon = icon("th"),
+            fluidRow(box(
+                DT::dataTableOutput("raw_spending_table") %>% withSpinner(color = "#6984D1"),
+                width = 12
+            ))
         ),
-        sidebarMenu(
-            menuItem(
-                "Raw Spending Data",
-                tabName = "raw_spending_data",
-                icon = icon("th")
-            ),
-            menuItem(
-                "Spending Summary",
-                tabName = "spending_summary_charts",
-                icon = icon("chart-line")
-            ),
-            menuItem(
-                "Net debt",
-                tabName = "net_debt",
-                icon = icon("balance-scale")
+        tabPanel(
+            title = "Spending Summary", icon = icon("chart-line"),
+            fluidRow(
+                box(plotOutput("total_spending_plot") %>% withSpinner(color = "#6984D1"))
             )
-        )
-    ),
-    dashboardBody(
-        tabItems(
-            tabItem(
-                "raw_spending_data",
-                fluidRow(
-                    box(DT::dataTableOutput("raw_spending_table") %>% withSpinner(color = "#6984D1"), width = 12)
-                )
-            ),
-            tabItem(
-                "spending_summary_charts",
-                fluidRow(
-                    box(plotOutput("total_spending_plot") %>% withSpinner(color = "#6984D1"))
-                )
-            ),
-            tabItem(
-                "net_debt",
-                fluidRow(
-                    box(DT::dataTableOutput("net_debt_table") %>% withSpinner(color = "#6984D1"), width = 8)
-                )
-            )
+        ),
+        tabPanel(
+            title = "Net debt", icon = icon("balance-scale"),
+            fluidRow(box(
+                DT::dataTableOutput("net_debt_table") %>% withSpinner(color = "#6984D1"),
+                width = 8
+            ))
         )
     )
 )
+
+
+dashboardPage(header, sidebar, body)
