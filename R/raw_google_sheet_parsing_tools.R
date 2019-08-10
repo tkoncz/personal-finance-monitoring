@@ -2,9 +2,7 @@ loadGoogleSheet <- function(google_sheet_name) {
     loadRawGoogleSheet(google_sheet_name) %>%
         fixDateFormat_() %>%
         addSubCategory_() %>%
-        fixOtherCurrency_() %>%
-        addShareAmounts_() %>%
-        addNetBalances_()
+        fixOtherCurrency_()
 }
 
 loadRawGoogleSheet <- function(google_sheet_name) {
@@ -36,6 +34,13 @@ fixOtherCurrency_ <- function(google_sheet) {
         Currency == "Other" & !is.na(`Specify other currency:`),
         Currency := `Specify other currency:`
     ]
+}
+
+prepareTableForRawData <- function(google_sheet) {
+    copy(google_sheet) %>%
+        addShareAmounts_() %>%
+        addNetBalances_() %>%
+        selectRelevantColumns()
 }
 
 addShareAmounts_ <- function(google_sheet) {
@@ -75,4 +80,21 @@ selectRelevantColumns <- function(google_sheet) {
         "Paid for", "Paid by", "NikiCica Net Balance", "TomiMaci Net Balance"
     )
     google_sheet[, relevant_cols, with = FALSE]
+}
+
+adjustForPaidForByBoth <- function(google_sheet) {
+    row_count <- google_sheet[, .N]
+    map(1:row_count, ~{
+        current_row <- google_sheet[.x]
+        if (current_row[, `Paid for`] == "NikiCica, TomiMaci") {
+            current_row_corrected_paid_for <- rbind(
+                copy(current_row)[, `:=`(`Paid for` = "NikiCica", Amount = Amount / 2)],
+                copy(current_row)[, `:=`(`Paid for` = "TomiMaci", Amount = Amount / 2)]
+            )
+        } else {
+            current_row_corrected_paid_for <- current_row
+        }
+
+        current_row_corrected_paid_for
+    }) %>% rbindlist()
 }

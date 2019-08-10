@@ -11,13 +11,6 @@ sidebar <- dashboardSidebar(
 body <- dashboardBody(
     tabsetPanel(type = "tabs",
         tabPanel(
-            title = "Raw Spending Data", icon = icon("th"),
-            fluidRow(box(
-                DT::dataTableOutput("raw_spending_table") %>% withSpinner(color = "#6984D1"),
-                width = 12
-            ))
-        ),
-        tabPanel(
             title = "Spending Summary", icon = icon("chart-line"),
             fluidRow(
                 box(plotOutput("total_spending_plot") %>% withSpinner(color = "#6984D1"))
@@ -28,6 +21,13 @@ body <- dashboardBody(
             fluidRow(box(
                 DT::dataTableOutput("net_debt_table") %>% withSpinner(color = "#6984D1"),
                 width = 8
+            ))
+        ),
+        tabPanel(
+            title = "Raw Spending Data", icon = icon("th"),
+            fluidRow(box(
+                DT::dataTableOutput("raw_spending_table") %>% withSpinner(color = "#6984D1"),
+                width = 12
             ))
         )
     )

@@ -1,6 +1,6 @@
 plotTotalSpending <- function(google_sheet) {
     cumulative_spending <- google_sheet %>%
-        .[, .(Spending = sum(Spending)), by = .(Date)] %>%
+        .[, .(Spending = sum(Amount)), by = .(Date)] %>%
         .[order(Date), spending_cumsum := cumsum(Spending)] %>%
         .[]
 

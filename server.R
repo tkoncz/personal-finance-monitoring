@@ -1,42 +1,33 @@
 server <- function(input, output) {
-    spending_google_sheet <- loadGoogleSheet(google_sheet_name = "Add new spending (Responses)")
-
-    output$raw_spending_table <- DT::renderDataTable(
-        spending_google_sheet %>% selectRelevantColumns(),
-        caption = "Raw Data from 'Add new spending (Responses)' Google Sheet",
-        options = list(pageLength = 50)
+    # Input Data ----
+    spending_google_sheet <- loadGoogleSheet(
+        google_sheet_name = "Add new spending (Responses)"
     )
 
-    getPlotInputDataReactive <- reactive({
+    spending_paid_for_both_adjusted <- adjustForPaidForByBoth(spending_google_sheet)
+
+    filterSpendingSheetReactive <- reactive({
         req(input$person_selector)
-        selected_person <- input$person_selector
+        selected_persons <- input$person_selector
 
-        if (length(selected_person) > 1) {
-            dt_to_plot <- spending_google_sheet %>%
-                .[, .(
-                    Date,
-                    Spending = `NikiCica Paid for Share` + `TomiMaci Paid for Share`
-                )]
-        } else {
-            dt_to_plot <- spending_google_sheet %>%
-                .[,
-                    c("Date", paste(selected_person, "Paid for Share")),
-                    with = FALSE
-                ] %>%
-                setnames(paste(selected_person, "Paid for Share"), "Spending")
-        }
-
-        dt_to_plot
+        spending_paid_for_both_adjusted %>%
+            .[`Paid for` %in% selected_persons]
     })
 
+    # UI - Plots & Tables ----
     output$total_spending_plot <- shiny::renderPlot(
-        getPlotInputDataReactive() %>%
-            plotTotalSpending()
+        plotTotalSpending(filterSpendingSheetReactive())
     )
 
     output$net_debt_table <- DT::renderDataTable(
-        prepareNetDebtTable(spending_google_sheet),
+        prepareNetDebtTable(spending_paid_for_both_adjusted),
         caption = "Net Debt by Currency",
-        options = list(pageLength = 50)
+        options = list(pageLength = 25)
+    )
+
+    output$raw_spending_table <- DT::renderDataTable(
+        prepareTableForRawData(spending_google_sheet),
+        caption = "Raw Data from 'Add new spending (Responses)' Google Sheet",
+        options = list(pageLength = 25)
     )
 }
