@@ -91,7 +91,9 @@ server <- function(input, output) {
 
     # UI - Plots & Tables ----
     output$total_spending_plot <- renderPlotly(
-        plotTotalSpendingOverTime(filterSpendingSheetReactive())
+        plotTotalSpendingOverTime(
+            filterSpendingSheetReactive(), date_range = input$date_interval
+        )
     )
 
     output$net_debt_table <- DT::renderDataTable(
