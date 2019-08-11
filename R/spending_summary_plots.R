@@ -1,4 +1,35 @@
 plotTotalSpendingOverTime <- function(google_sheet, date_range) {
+    cumulative_spending <- prepareDataForTotalSpendingOverTimePlot(
+        google_sheet, date_range
+    )
+
+    p <- ggplot(
+        cumulative_spending, aes(
+            x = as.character(Date), y = spending_cumsum,
+            text = paste0(
+                "Total Spending: ", scales::comma(spending_cumsum), "<br>",
+                "By NikiCica: ", scales::comma(nikicica_spending_cumsum), "<br>",
+                "By TomiMaci: ", scales::comma(tomimaci_spending_cumsum), "<br>",
+                "Spending Until: ", Date, "<br>",
+                "Spending Since: ", date_range[1], "<br>"
+            )
+        )
+    ) +
+        geom_bar(stat = "identity", fill = getColorScale(1)) +
+        scale_y_continuous(
+            breaks = scales::pretty_breaks(), labels = scales::comma
+        ) +
+        labs(
+            title = "Cumulative Spending Over Time",
+            x = "", y = ""
+        ) +
+        theme_minimal() +
+        theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+    ggplotly(p, tooltip = c("text"))
+}
+
+prepareDataForTotalSpendingOverTimePlot <- function(google_sheet, date_range) {
     cumulative_spending <- google_sheet %>%
         .[, .(
                 spending = sum(Amount),
@@ -24,34 +55,20 @@ plotTotalSpendingOverTime <- function(google_sheet, date_range) {
     ) %>%
         .[order(Date)] %>%
         .[, `:=`(
-            spending_cumsum          = zoo::na.locf(spending_cumsum),
-            tomimaci_spending_cumsum = zoo::na.locf(tomimaci_spending_cumsum),
-            nikicica_spending_cumsum = zoo::na.locf(nikicica_spending_cumsum)
+            spending_cumsum          = zoo::na.locf(spending_cumsum, na.rm = FALSE),
+            tomimaci_spending_cumsum = zoo::na.locf(tomimaci_spending_cumsum, na.rm = FALSE),
+            nikicica_spending_cumsum = zoo::na.locf(nikicica_spending_cumsum, na.rm = FALSE)
         )]
-
-    p <- ggplot(
-        cumulative_spending, aes(
-            x = as.character(Date), y = spending_cumsum,
-            text = paste0(
-                "Total Spending: ", scales::comma(spending_cumsum), "<br>",
-                "By NikiCica: ", scales::comma(nikicica_spending_cumsum), "<br>",
-                "By TomiMaci: ", scales::comma(tomimaci_spending_cumsum), "<br>",
-                "Spending Until: ", Date, "<br>",
-                "Spending Since: ", date_range[1], "<br>"
-            )
-        )
-    ) +
-        geom_bar(stat = "identity", fill = "lightblue") +
-        scale_y_continuous(
-            breaks = scales::pretty_breaks(), labels = scales::comma
-        ) +
-        labs(
-            title = "Cumulative Spending Over Time",
-            x = "", y = ""
-        ) +
-        theme_minimal() +
-        theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-    ggplotly(p, tooltip = c("text"))
 }
 
+getColorScale <- function(n = 5) {
+    colors <- c(
+        "blue"      = "#0571b0",
+        "red"       = "#ca0020",
+        "white"     = "#f7f7f7",
+        "lightblue" = "#92c5de",
+        "orange"    = "#f4a582"
+    )
+
+    colors[1:n]
+}
