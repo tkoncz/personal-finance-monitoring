@@ -1,5 +1,7 @@
+# HEADER ----
 header <- dashboardHeader(title = "Personal finance monitoring")
 
+# SIDEBAR ----
 sidebar <- dashboardSidebar(
     sidebarMenu(
         uiOutput("date_interval_filter"),
@@ -10,12 +12,14 @@ sidebar <- dashboardSidebar(
     )
 )
 
+# BODY ----
 body <- dashboardBody(
     tabsetPanel(type = "tabs",
         tabPanel(
             title = "Spending Summary", icon = icon("chart-line"),
             fluidRow(
-                box(plotlyOutput("total_spending_plot") %>% withSpinner(color = "#6984D1"))
+                box(plotlyOutput("total_spending_over_time_plot") %>% withSpinner(color = "#6984D1")),
+                box(plotlyOutput("total_spending_by_category_plot") %>% withSpinner(color = "#6984D1"))
             )
         ),
         tabPanel(
@@ -35,5 +39,5 @@ body <- dashboardBody(
     )
 )
 
-
+# PUTTING IT TOGETHER ----
 dashboardPage(header, sidebar, body)

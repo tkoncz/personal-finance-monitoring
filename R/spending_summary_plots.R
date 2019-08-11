@@ -4,7 +4,8 @@ plotTotalSpendingOverTime <- function(google_sheet, date_range) {
     )
 
     p <- ggplot(
-        cumulative_spending, aes(
+        cumulative_spending,
+        aes(
             x = as.character(Date), y = spending_cumsum,
             text = paste0(
                 "Total Spending: ", scales::comma(spending_cumsum), "<br>",
@@ -61,14 +62,62 @@ prepareDataForTotalSpendingOverTimePlot <- function(google_sheet, date_range) {
         )]
 }
 
-getColorScale <- function(n = 5) {
-    colors <- c(
-        "blue"      = "#0571b0",
-        "red"       = "#ca0020",
-        "white"     = "#f7f7f7",
-        "lightblue" = "#92c5de",
-        "orange"    = "#f4a582"
-    )
+plotTotalSpendingByCategory <- function(google_sheet) {
+    spending_by_category <- prepareDataForTotalSpendingByCategoryPlot(google_sheet)
 
-    colors[1:n]
+    p <- ggplot(
+        spending_by_category,
+        aes(
+            x = Category, y = spending, fill = Category,
+            text = paste0(
+                "Category: ", Category, "<br>",
+                "Total Spending: ", scales::comma(spending), "<br>",
+                "By NikiCica: ", scales::comma(nikicica_spending), "<br>",
+                "By TomiMaci: ", scales::comma(tomimaci_spending)
+            )
+        )
+    ) +
+        geom_bar(stat = "identity") +
+        scale_fill_manual(values = rev(unname(getColorScale(7)))) +
+        scale_y_continuous(
+            breaks = scales::pretty_breaks(), labels = scales::comma
+        ) +
+        labs(
+            title = "Spending By Category",
+            x = "", y = ""
+        ) +
+        coord_flip() +
+        theme_minimal() +
+        theme(
+            axis.text.x = element_text(angle = 45, hjust = 1),
+            legend.position = "none"
+        )
+
+    ggplotly(p, tooltip = c("text"))
+}
+
+prepareDataForTotalSpendingByCategoryPlot <- function(google_sheet) {
+    spending_by_category <- google_sheet %>%
+        .[, .(
+                spending = sum(Amount),
+                nikicica_spending = sum(Amount[`Paid for` == "NikiCica"]),
+                tomimaci_spending = sum(Amount[`Paid for` == "TomiMaci"])
+            ),
+            by = .(Category)
+        ] %>%
+        .[, category_rank := frank(-spending)] %>%
+        .[, Category := ifelse(category_rank < 7, Category, "Other Categories")] %>%
+        .[, .(
+                spending = sum(spending),
+                nikicica_spending = sum(nikicica_spending),
+                tomimaci_spending = sum(tomimaci_spending)
+            ),
+            by = .(Category)
+        ]
+
+    categories_in_order <- spending_by_category[Category != "Other Categories"][order(spending), Category]
+    categories_in_order <- c("Other Categories", categories_in_order)
+    spending_by_category[, Category := factor(Category, levels = categories_in_order)]
+
+    spending_by_category
 }
