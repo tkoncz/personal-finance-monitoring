@@ -44,10 +44,11 @@ server <- function(input, output) {
         min_date <- spending_google_sheet[, min(Date)]
         max_date <- spending_google_sheet[, max(Date)]
 
-        sliderInput(
-            "date_interval", "Select Date Interval:",
-            min = min_date, max = max_date, value = c(min_date, max_date),
-            step = 1
+        dateRangeInput(
+            inputId = 'date_interval', label = "Select Date Range:",
+            min = min_date, max = max_date,
+            start = min_date, end = max_date,
+            startview = 'year', weekstart = 1
         )
     })
 
