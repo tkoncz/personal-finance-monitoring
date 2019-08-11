@@ -4,6 +4,7 @@ sidebar <- dashboardSidebar(
     sidebarMenu(
         uiOutput("date_interval_filter"),
         uiOutput("category_filter"),
+        uiOutput("subcategory_filter"),
         uiOutput("currency_filter"),
         uiOutput("person_filter")
     )

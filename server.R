@@ -10,11 +10,13 @@ server <- function(input, output) {
         req(input$person)
         req(input$date_interval)
         req(input$category)
+        req(input$subcategory)
 
         spending_paid_for_both_adjusted %>%
             .[`Paid for` %in% input$person] %>%
             .[Date %between% input$date_interval] %>%
-            .[Category %in% input$category]
+            .[Category %in% input$category] %>%
+            .[Subcategory %in% input$subcategory]
     })
 
     # UI - Filters ----
@@ -24,10 +26,7 @@ server <- function(input, output) {
         pickerInput(
             inputId = "person", label = "Select Person:",
             choices = persons, selected = persons,
-            options = list(
-                `actions-box` = TRUE, size = 10,
-                `selected-text-format` = "count > 3"
-            ),
+            options = list(`actions-box` = TRUE, size = 10),
             multiple = TRUE
         )
     })
@@ -35,9 +34,9 @@ server <- function(input, output) {
     output$currency_filter <- renderUI({
         currencies <- spending_google_sheet[, unique(`Currency`)]
 
-        selectInput(
+        pickerInput(
             "currency", "Select Currency:",
-            currencies
+            choices = currencies, selected = "HUF"
         )
     })
 
@@ -58,6 +57,30 @@ server <- function(input, output) {
         pickerInput(
             inputId = "category", label = "Select Category:",
             choices = categories, selected = categories,
+            options = list(
+                `actions-box` = TRUE, size = 10,
+                `selected-text-format` = "count > 3"
+            ),
+            multiple = TRUE
+        )
+    })
+
+    output$subcategory_filter <- renderUI({
+        subcategory_map <- spending_google_sheet[, .(`Category`, `Subcategory`)] %>%
+            unique()
+
+        subcategories <- subcategory_map %>%
+            split(by = "Category") %>%
+            map(~.x[["Subcategory"]])
+
+        subcategories_preselected <- spending_google_sheet[, unique(`Subcategory`)]
+        # note: this a work-around, as somehow selected = subcategories doesn't work
+        # (probably have to do with cases when there is 1 subcategory / category)
+
+        pickerInput(
+            inputId = "subcategory", label = "Select Subcategory:",
+            choices = subcategories,
+            selected = subcategories_preselected,
             options = list(
                 `actions-box` = TRUE, size = 10,
                 `selected-text-format` = "count > 3"
