@@ -100,6 +100,10 @@ server <- function(input, output) {
         plotTotalSpendingByCategory(filterSpendingSheetReactive())
     )
 
+    output$total_spending_by_person_plot <- renderPlotly(
+        plotTotalSpendingByPerson(filterSpendingSheetReactive())
+    )
+
     output$net_debt_table <- DT::renderDataTable(
         prepareNetDebtTable(spending_paid_for_both_adjusted),
         caption = "Net Debt by Currency",

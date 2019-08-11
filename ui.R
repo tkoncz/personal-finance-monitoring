@@ -18,8 +18,14 @@ body <- dashboardBody(
         tabPanel(
             title = "Spending Summary", icon = icon("chart-line"),
             fluidRow(
-                box(plotlyOutput("total_spending_over_time_plot") %>% withSpinner(color = "#6984D1")),
-                box(plotlyOutput("total_spending_by_category_plot") %>% withSpinner(color = "#6984D1"))
+                box(
+                    plotlyOutput("total_spending_over_time_plot") %>% withSpinner(color = "#6984D1"),
+                    width = 12
+                )
+            ),
+            fluidRow(
+                box(plotlyOutput("total_spending_by_category_plot") %>% withSpinner(color = "#6984D1")),
+                box(plotlyOutput("total_spending_by_person_plot") %>% withSpinner(color = "#6984D1"))
             )
         ),
         tabPanel(

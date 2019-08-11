@@ -11,6 +11,7 @@ plotTotalSpendingOverTime <- function(google_sheet, date_range) {
                 "Total Spending: ", scales::comma(spending_cumsum), "<br>",
                 "By NikiCica: ", scales::comma(nikicica_spending_cumsum), "<br>",
                 "By TomiMaci: ", scales::comma(tomimaci_spending_cumsum), "<br>",
+                "Spending on date: ", scales::comma(spending), "<br>",
                 "Spending Until: ", Date, "<br>",
                 "Spending Since: ", date_range[1], "<br>"
             )
@@ -78,7 +79,7 @@ plotTotalSpendingByCategory <- function(google_sheet) {
         )
     ) +
         geom_bar(stat = "identity") +
-        scale_fill_manual(values = rev(unname(getColorScale(7)))) +
+        scale_fill_manual(values = rev(unname(getColorScale(6)))) +
         scale_y_continuous(
             breaks = scales::pretty_breaks(), labels = scales::comma
         ) +
@@ -106,7 +107,7 @@ prepareDataForTotalSpendingByCategoryPlot <- function(google_sheet) {
             by = .(Category)
         ] %>%
         .[, category_rank := frank(-spending)] %>%
-        .[, Category := ifelse(category_rank < 7, Category, "Other Categories")] %>%
+        .[, Category := ifelse(category_rank < 6, Category, "Other Categories")] %>%
         .[, .(
                 spending = sum(spending),
                 nikicica_spending = sum(nikicica_spending),
@@ -120,4 +121,37 @@ prepareDataForTotalSpendingByCategoryPlot <- function(google_sheet) {
     spending_by_category[, Category := factor(Category, levels = categories_in_order)]
 
     spending_by_category
+}
+
+plotTotalSpendingByPerson <- function(google_sheet) {
+    spending_by_person <- google_sheet %>%
+        .[, .(spending = sum(Amount)), by = .(person = `Paid for`)]
+
+    p <- ggplot(
+        spending_by_person,
+        aes(
+            x = person, y = spending, fill = person,
+            text = paste0(
+                "Person: ", person, "<br>",
+                "Total Spending: ", scales::comma(spending)
+            )
+        )
+    ) +
+        geom_bar(stat = "identity") +
+        scale_fill_manual(values = rev(unname(getColorScale(2)))) +
+        scale_y_continuous(
+            breaks = scales::pretty_breaks(), labels = scales::comma
+        ) +
+        labs(
+            title = "Spending By Person",
+            x = "", y = ""
+        ) +
+        coord_flip() +
+        theme_minimal() +
+        theme(
+            axis.text.x = element_text(angle = 45, hjust = 1),
+            legend.position = "none"
+        )
+
+    ggplotly(p, tooltip = c("text"))
 }
