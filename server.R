@@ -90,7 +90,7 @@ server <- function(input, output) {
     })
 
     # UI - Plots & Tables ----
-    output$total_spending_plot <- shiny::renderPlot(
+    output$total_spending_plot <- renderPlotly(
         plotTotalSpendingOverTime(filterSpendingSheetReactive())
     )
 

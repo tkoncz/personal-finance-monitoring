@@ -15,7 +15,7 @@ body <- dashboardBody(
         tabPanel(
             title = "Spending Summary", icon = icon("chart-line"),
             fluidRow(
-                box(plotOutput("total_spending_plot") %>% withSpinner(color = "#6984D1"))
+                box(plotlyOutput("total_spending_plot") %>% withSpinner(color = "#6984D1"))
             )
         ),
         tabPanel(
