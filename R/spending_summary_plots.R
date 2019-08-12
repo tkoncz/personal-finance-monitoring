@@ -6,7 +6,7 @@ plotTotalSpendingOverTime <- function(google_sheet, date_range) {
     p <- ggplot(
         cumulative_spending,
         aes(
-            x = as.character(Date), y = spending_cumsum,
+            x = as.character(Date), y = spending_cumsum, ymin = 0, ymax = spending_cumsum, group = 1,
             text = paste0(
                 "Total Spending: ", scales::comma(spending_cumsum), "<br>",
                 "By NikiCica: ", scales::comma(nikicica_spending_cumsum), "<br>",
@@ -17,7 +17,9 @@ plotTotalSpendingOverTime <- function(google_sheet, date_range) {
             )
         )
     ) +
-        geom_bar(stat = "identity", fill = getColorScale(1)) +
+        geom_line(color = getColorScale(1)) +
+        geom_ribbon(fill = getColorScale(3)[3], alpha = 0.5) +
+        geom_point(color = getColorScale(1), size = 2) +
         scale_y_continuous(
             breaks = scales::pretty_breaks(), labels = scales::comma
         ) +
