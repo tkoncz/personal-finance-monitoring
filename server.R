@@ -116,4 +116,15 @@ server <- function(input, output) {
         caption = "Raw Data from 'Add new spending (Responses)' Google Sheet",
         options = list(pageLength = 25)
     )
+
+    output$download_raw_spending <- downloadHandler(
+        filename = function() {paste0(
+            "raw_spending_from_", input$date_interval[1],
+            "_to_", input$date_interval[2], ".csv"
+        )},
+        content = function(con) {write.csv(
+            prepareTableForRawData(spending_google_sheet), con
+        )}
+    )
+
 }

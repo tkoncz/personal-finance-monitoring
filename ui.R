@@ -37,6 +37,7 @@ body <- dashboardBody(
         ),
         tabPanel(
             title = "Raw Spending Data", icon = icon("th"),
+            downloadLink("download_raw_spending", "Export to .csv file"),
             fluidRow(box(
                 DT::dataTableOutput("raw_spending_table") %>% withSpinner(color = "#6984D1"),
                 width = 12
