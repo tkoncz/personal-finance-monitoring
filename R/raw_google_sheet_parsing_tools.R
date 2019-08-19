@@ -95,6 +95,19 @@ adjustForPaidForByBoth <- function(google_sheet) {
             current_row_corrected_paid_for <- current_row
         }
 
-        current_row_corrected_paid_for
+        if (unique(current_row_corrected_paid_for[, `Paid by`]) == "NikiCica, TomiMaci") {
+            current_row_corrected_paid_for_paid_by <- rbind(
+                copy(current_row_corrected_paid_for)[,
+                    `:=`(`Paid by` = "NikiCica", Amount = Amount / 2)
+                ],
+                copy(current_row_corrected_paid_for)[,
+                    `:=`(`Paid by` = "TomiMaci", Amount = Amount / 2)
+                ]
+            )
+        } else {
+            current_row_corrected_paid_for_paid_by <- current_row_corrected_paid_for
+        }
+
+        current_row_corrected_paid_for_paid_by
     }) %>% rbindlist()
 }
