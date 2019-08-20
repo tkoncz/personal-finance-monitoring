@@ -1,3 +1,4 @@
+# ----
 context("Fixing field formats")
 
 test_that("Date & Timestamp columns are converted to correct format", {
@@ -54,6 +55,54 @@ test_that("Currency is correctly updated for 'Other'", {
     )
 })
 
+# ----
+context("Share amount & Net balance calculation")
+
+test_that("Share amounts are calculated correctly", {
+    spending_table <- data.table(
+        Amount     = rep(10,           3),
+        `Paid for` = c("TomiMaci", "NikiCica", "NikiCica, TomiMaci"),
+        `Paid by`  = c("TomiMaci", "NikiCica", "NikiCica")
+    )
+
+    addShareAmounts_(spending_table)
+
+    expected_adjusted_spending_table <- data.table(
+        Amount                    = c(10,         10,         10),
+        `Paid for`                = c("TomiMaci", "NikiCica", "NikiCica, TomiMaci"),
+        `Paid by`                 = c("TomiMaci", "NikiCica", "NikiCica"),
+        `TomiMaci Paid for Share` = c(10,         0,           5),
+        `TomiMaci Paid by Share`  = c(10,         0,           0),
+        `NikiCica Paid for Share` = c(0,          10,          5),
+        `NikiCica Paid by Share`  = c(0,          10,          10)
+    )
+
+    expect_equal(spending_table, expected_adjusted_spending_table)
+})
+
+test_that("Net balances are calculated correctly", {
+    spending_table <- data.table(
+        `TomiMaci Paid for Share` = c(10, 0,  5),
+        `TomiMaci Paid by Share`  = c(10, 0,  0),
+        `NikiCica Paid for Share` = c(0,  10, 5),
+        `NikiCica Paid by Share`  = c(0,  10, 10)
+    )
+
+    addNetBalances_(spending_table)
+
+    expected_adjusted_spending_table <- data.table(
+        `TomiMaci Paid for Share` = c(10, 0,  5),
+        `TomiMaci Paid by Share`  = c(10, 0,  0),
+        `NikiCica Paid for Share` = c(0,  10, 5),
+        `NikiCica Paid by Share`  = c(0,  10, 10),
+        `NikiCica Net Balance`    = c(0,  0,  5),
+        `TomiMaci Net Balance`    = c(0,  0,  -5)
+    )
+
+    expect_equal(spending_table, expected_adjusted_spending_table)
+})
+
+# ----
 context("Adjust records corresponding multiple people")
 
 test_that("Simple case when everyone pays for themselves works", {
