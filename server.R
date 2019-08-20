@@ -4,7 +4,7 @@ server <- function(input, output) {
         google_sheet_name = "Add new spending (Responses)"
     )
 
-    spending_paid_for_both_adjusted <- adjustForPaidForByBoth(spending_google_sheet)
+    spending_paid_for_both_adjusted <- adjustForPaidForOrPaidByMultiplePeople(spending_google_sheet)
 
     filterSpendingSheetReactive <- reactive({
         req(input$person)

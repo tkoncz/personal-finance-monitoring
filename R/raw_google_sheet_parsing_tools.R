@@ -82,7 +82,7 @@ selectRelevantColumns <- function(google_sheet) {
     google_sheet[, relevant_cols, with = FALSE]
 }
 
-adjustForPaidForByBoth <- function(google_sheet) {
+adjustForPaidForOrPaidByMultiplePeople <- function(google_sheet) {
     row_count <- google_sheet[, .N]
     map(1:row_count, ~{
         current_row <- google_sheet[.x]

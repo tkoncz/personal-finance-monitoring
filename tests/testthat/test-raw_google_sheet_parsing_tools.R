@@ -65,7 +65,7 @@ test_that("Simple case when everyone pays for themselves works", {
     )
 
     expect_equal(
-        adjustForPaidForByBoth(spending_table),
+        adjustForPaidForOrPaidByMultiplePeople(spending_table),
         spending_table
     )
 })
@@ -86,7 +86,7 @@ test_that("If someone paid for two people, it is parsed correctly", {
     )
 
     expect_equal(
-        adjustForPaidForByBoth(spending_table),
+        adjustForPaidForOrPaidByMultiplePeople(spending_table),
         expected_adjusted_spending_table
     )
 })
@@ -107,7 +107,7 @@ test_that("If something is paid by two people, it is parsed correctly", {
     )
 
     expect_equal(
-        adjustForPaidForByBoth(spending_table),
+        adjustForPaidForOrPaidByMultiplePeople(spending_table),
         expected_adjusted_spending_table
     )
 })
@@ -128,7 +128,7 @@ test_that("If something is paid by and for two people, it is parsed correctly", 
     )
 
     expect_equal(
-        adjustForPaidForByBoth(spending_table),
+        adjustForPaidForOrPaidByMultiplePeople(spending_table),
         expected_adjusted_spending_table
     )
 })
