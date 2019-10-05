@@ -36,6 +36,10 @@ fixOtherCurrency_ <- function(google_sheet) {
     ]
 }
 
+addSpendingUniqueID_ <- function() {
+    google_sheet[, spending_unique_id := runif(1)]
+}
+
 prepareTableForRawData <- function(google_sheet) {
     copy(google_sheet) %>%
         addShareAmounts_() %>%
