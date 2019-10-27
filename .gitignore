@@ -7,3 +7,4 @@
 googlesheets_token.rds
 *.rds
 .Rprofile
+.DS_Store
