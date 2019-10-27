@@ -1,7 +1,7 @@
 # ----
 context("Unique ID is created for all records")
 
-test_that("Different records are given different IDs", ~{
+test_that("Different records are given different IDs", {
     test_table <- data.table(
         Timestamp   = c("7/29/2019 13:07:10", "7/29/2019 14:00:01"),
         Date        = c("7/29/2019",          "7/29/2019"),
@@ -20,7 +20,7 @@ test_that("Different records are given different IDs", ~{
     )
 })
 
-test_that("Same record is given the same ID if run twice", ~{
+test_that("Same record is given the same ID if run twice", {
     test_table <- data.table(
         Timestamp   = c("7/29/2019 13:07:10"),
         Date        = c("7/29/2019"),
