@@ -1,50 +1,19 @@
-# HEADER ----
-header <- dashboardHeader(title = "Personal finance monitoring")
+source("global.R")
 
-# SIDEBAR ----
-sidebar <- dashboardSidebar(
-    sidebarMenu(
-        uiOutput("date_interval_filter"),
-        uiOutput("category_filter"),
-        uiOutput("subcategory_filter"),
-        uiOutput("currency_filter"),
-        uiOutput("person_filter")
+shinyUI(navbarPage("Personal finance monitoring",
+    tabPanel(
+        "Spending Summary",
+        spendingSummaryUI(),
+        icon = icon("chart-line")
+    ),
+    tabPanel(
+        "Net debt",
+        netDebtUI(),
+        icon = icon("balance-scale")
+    ),
+    tabPanel(
+        "Raw Spending Data",
+        rawSpendingUI(),
+        icon = icon("th")
     )
-)
-
-# BODY ----
-body <- dashboardBody(
-    tabsetPanel(type = "tabs",
-        tabPanel(
-            title = "Spending Summary", icon = icon("chart-line"),
-            fluidRow(
-                box(
-                    plotlyOutput("total_spending_over_time_plot") %>% withSpinner(color = "#6984D1"),
-                    width = 12
-                )
-            ),
-            fluidRow(
-                box(plotlyOutput("total_spending_by_category_plot") %>% withSpinner(color = "#6984D1")),
-                box(plotlyOutput("total_spending_by_person_plot") %>% withSpinner(color = "#6984D1"))
-            )
-        ),
-        tabPanel(
-            title = "Net debt", icon = icon("balance-scale"),
-            fluidRow(box(
-                DT::dataTableOutput("net_debt_table") %>% withSpinner(color = "#6984D1"),
-                width = 8
-            ))
-        ),
-        tabPanel(
-            title = "Raw Spending Data", icon = icon("th"),
-            downloadLink("download_raw_spending", "Export to .csv file"),
-            fluidRow(box(
-                DT::dataTableOutput("raw_spending_table") %>% withSpinner(color = "#6984D1"),
-                width = 12
-            ))
-        )
-    )
-)
-
-# PUTTING IT TOGETHER ----
-dashboardPage(header, sidebar, body)
+))
