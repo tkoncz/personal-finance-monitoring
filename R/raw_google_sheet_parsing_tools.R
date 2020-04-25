@@ -1,15 +1,13 @@
-loadGoogleSheet <- function(google_sheet_name) {
-    loadRawGoogleSheet(google_sheet_name) %>%
+loadGoogleSheet <- function(sheet_id) {
+    loadRawGoogleSheet(sheet_id) %>%
         fixDateFormat_() %>%
         addSubCategory_() %>%
         fixOtherCurrency_()
 }
 
-loadRawGoogleSheet <- function(google_sheet_name) {
-    google_sheet_name %>%
-        googlesheets::gs_title() %>%
-        googlesheets::gs_read() %>%
-        data.table::as.data.table()
+loadRawGoogleSheet <- function(sheet_id) {
+    googlesheets4::read_sheet(sheet_id) %>%
+        as.data.table()
 }
 
 fixDateFormat_ <- function(raw_google_sheet) {

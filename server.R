@@ -1,7 +1,7 @@
 server <- function(input, output) {
     # Input Data ----
     spending_google_sheet <- loadGoogleSheet(
-        google_sheet_name = "Add new spending (Responses)"
+        sheet_id = Sys.getenv("GOOGLE_SHEET_ID")
     )
 
     spending_paid_for_both_adjusted <- adjustForPaidForOrPaidByMultiplePeople(spending_google_sheet)
