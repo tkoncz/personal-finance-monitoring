@@ -4,7 +4,7 @@
 .Ruserdata
 .httr-oauth
 .Renviron
-googlesheets_token.rds
-*.rds
 .Rprofile
 .DS_Store
+.R
+.rstudio

@@ -1,0 +1,12 @@
+shiny
+shinydashboard
+shinycssloaders
+DT
+shinyWidgets
+googlesheets4
+data.table
+zoo
+purrr
+magrittr
+ggplot2
+plotly
