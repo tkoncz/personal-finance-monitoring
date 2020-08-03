@@ -13,6 +13,10 @@ spendingSummaryUI <- function() {
         sidebarLayout(
             sidebarPanel(width = 3,
                 uiOutput("date_interval_filter"),
+                selectInput(
+                    "date_aggregation_level", "Select Date Aggregation:",
+                    choices = c("month", "week", "day"), selected = "month"
+                ),
                 uiOutput("category_filter"),
                 uiOutput("subcategory_filter"),
                 uiOutput("currency_filter"),

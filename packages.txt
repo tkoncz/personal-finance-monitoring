@@ -10,3 +10,4 @@ purrr
 magrittr
 ggplot2
 plotly
+lubridate

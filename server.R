@@ -4,7 +4,9 @@ server <- function(input, output) {
         sheet_id = Sys.getenv("GOOGLE_SHEET_ID")
     )
 
-    spending_paid_for_both_adjusted <- adjustForPaidForOrPaidByMultiplePeople(spending_google_sheet)
+    spending_paid_for_both_adjusted <- adjustForPaidForOrPaidByMultiplePeople(
+        spending_google_sheet
+    )
 
     filterSpendingSheetReactive <- reactive({
         req(input$person)
@@ -93,7 +95,8 @@ server <- function(input, output) {
     # UI - Plots & Tables ----
     output$total_spending_over_time_plot <- renderPlotly(
         plotTotalSpendingOverTime(
-            filterSpendingSheetReactive(), date_range = input$date_interval
+            filterSpendingSheetReactive(), date_range = input$date_interval,
+            date_aggregation_level = input$date_aggregation_level
         )
     )
 

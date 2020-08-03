@@ -1,6 +1,8 @@
-plotTotalSpendingOverTime <- function(google_sheet, date_range) {
+plotTotalSpendingOverTime <- function(google_sheet,
+                                      date_range,
+                                      date_aggregation_level) {
     cumulative_spending <- prepareDataForTotalSpendingOverTimePlot(
-        google_sheet, date_range
+        google_sheet, date_range, date_aggregation_level
     )
 
     p <- ggplot(
@@ -33,8 +35,15 @@ plotTotalSpendingOverTime <- function(google_sheet, date_range) {
     ggplotly(p, tooltip = c("text"))
 }
 
-prepareDataForTotalSpendingOverTimePlot <- function(google_sheet, date_range) {
+prepareDataForTotalSpendingOverTimePlot <- function(google_sheet,
+                                                    date_range,
+                                                    date_aggregation_level) {
+
     cumulative_spending <- google_sheet %>%
+        copy() %>%
+        .[, Date := floor_date(
+            Date, date_aggregation_level, week_start = 1
+        )] %>%
         .[, .(
                 spending = sum(Amount),
                 nikicica_spending = sum(Amount[`Paid for` == "NikiCica"]),
@@ -50,7 +59,11 @@ prepareDataForTotalSpendingOverTimePlot <- function(google_sheet, date_range) {
         )]
 
     all_dates_in_interval <- data.table(
-        Date = seq.Date(date_range[1], date_range[2], by = "day")
+        Date = seq.Date(
+            floor_date(date_range[1], date_aggregation_level, week_start = 1),
+            floor_date(date_range[2], date_aggregation_level, week_start = 1),
+            by = date_aggregation_level
+        )
     )
 
     cumulative_spending <- merge(
